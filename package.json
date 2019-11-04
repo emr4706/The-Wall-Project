@@ -1,0 +1,34 @@
+{
+  "name": "The-Wall-Project",
+  "version": "1.0.0",
+  "description": "- When the user opens the webpage, he has two options: Login and Registration.   - For the first time the user needs to create their own account in order to use the Wall application.  - He registers with this informations: username, fullname, email, password, password confirmation.  \t **Conditions:** \t - The email and username fields are unique, so only one user with one email \t - The password and password confirmation fields are identical. \t - Password needs to be at least 6 characters. \t - If any of these fails, user sees a proper warning message on the screen.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emr4706/The-Wall-Project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/emr4706/The-Wall-Project/issues"
+  },
+  "homepage": "https://github.com/emr4706/The-Wall-Project#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "ejs": "^2.7.1",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "mongoose": "^5.7.7",
+    "mongoose-findorcreate": "^3.0.0",
+    "passport": "^0.4.0",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^5.0.1"
+  }
+}
