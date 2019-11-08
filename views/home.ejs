@@ -1,16 +1,49 @@
 <%- include('partials/header') %>
-
-
-<div class="jumbotron centered">
-  <div class="container">
-    <i class="fas fa-key fa-6x"></i>
-    <h1 class="display-3">Secrets</h1>
-    <p class="lead">Don't keep your secrets, share them anonymously!</p>
-    <hr>
-    <a class="btn btn-light btn-lg" href="/register" role="button">Register</a>
-    <a class="btn btn-dark btn-lg" href="/login" role="button">Login</a>
-
+<nav class="navbar navbar-inverse" style="background-color: #f8f8f8">
+  <div class="container-fluid" style="display: inline-block">
+    <div class="navbar-header">
+      <h4 style="margin-top: 15px; color: rgb(206, 56, 56); margin-left: 100px"><%= %></h4>
+      <!-- <a class="navbar-brand" href="#">WebSiteName</a> -->
+    </div>
+    <ul class="nav navbar-nav" style="display: inline; margin-left: 800px">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Link</a></li>
+      <li><a href="#">Link</a></li>
+    </ul>
+    <button class="btn btn-danger navbar-btn" style="margin-left: px">Home</button>
+    <a class="btn btn-danger navbar-btn" href="/logout">Logout</a>
   </div>
-</div>
+</nav>
+
+<form class="" style="text-align: center" action="/publish" method="POST">
+  <div class="form-group">
+    <label style="font-size: 26px; color:white;">Post</label>
+    <textarea class="form-control" style="width: 500px; margin-left: auto; margin-right: auto" name="postBody" rows="5" cols="30"></textarea>
+  </div>
+  <button class="btn btn-primary" type="submit" name="button">Publish</button>
+</form>
+
+   <% userWithPosts.forEach(post => { %>
+   <div>
+<div class="card" style="width: 500px; margin-left: auto; margin-right: auto; margin-top: 20px">
+   <div class="card-body" style="position: flex"></div>
+      <h5 class="card-title"><a href="#"><%=post.user%></a></h5>
+      <p class="card-text" style="margin-bottom: 25px"><%= post.content %></p>
+        <div>
+            <a href="#" class="btn btn-primary" style="width: 40px">👍</a>
+            <a href="#" class="btn btn-primary" style="width: 40px">👎</a>
+            <a href="#" class="" style="margin-left: 20px"><%= post.likes %></a>
+            <a href="#" class="" style="margin-left: 250px"><%= post.createdAt %></a>
+        </div>
+      
+     </div>
+  </div>
+   </div>
+   <% }) %>
+ 
+
+
+
+
 
 <%- include('partials/footer') %>
