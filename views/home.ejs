@@ -1,49 +1,172 @@
-<%- include('partials/header') %>
-<nav class="navbar navbar-inverse" style="background-color: #f8f8f8">
-  <div class="container-fluid" style="display: inline-block">
-    <div class="navbar-header">
-      <h4 style="margin-top: 15px; color: rgb(206, 56, 56); margin-left: 100px"><%= %></h4>
-      <!-- <a class="navbar-brand" href="#">WebSiteName</a> -->
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css" />
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous" />
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+    integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+    integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+    crossorigin="anonymous"></script>
+
+<nav class="navbar navbar-light bg-white">
+    <a href="#" class="navbar-brand" style="color: crimson; font-family: Georgia, 'Times New Roman', Times, serif; font-size: 40px">Cidiki Lo</a>
+    <div style="margin-left: 800px">
+     <a href="#">Link</a>
+    <a style="margin-left: 10px; margin-right: 10px" href="#">Link</a>
+    <a class="btn btn-danger navbar-btn" href="/logout">Logout</a>   
     </div>
-    <ul class="nav navbar-nav" style="display: inline; margin-left: 800px">
-      <li><a href="#">Home</a></li>
-      <li><a href="#">Link</a></li>
-      <li><a href="#">Link</a></li>
-    </ul>
-    <button class="btn btn-danger navbar-btn" style="margin-left: px">Home</button>
-    <a class="btn btn-danger navbar-btn" href="/logout">Logout</a>
-  </div>
-</nav>
+    
+</nav>    
 
-<form class="" style="text-align: center" action="/publish" method="POST">
-  <div class="form-group">
-    <label style="font-size: 26px; color:white;">Post</label>
-    <textarea class="form-control" style="width: 500px; margin-left: auto; margin-right: auto" name="postBody" rows="5" cols="30"></textarea>
-  </div>
-  <button class="btn btn-primary" type="submit" name="button">Publish</button>
-</form>
 
-   <% userWithPosts.forEach(post => { %>
-   <div>
-<div class="card" style="width: 500px; margin-left: auto; margin-right: auto; margin-top: 20px">
-   <div class="card-body" style="position: flex"></div>
-      <h5 class="card-title"><a href="#"><%=post.user%></a></h5>
-      <p class="card-text" style="margin-bottom: 25px"><%= post.content %></p>
-        <div>
-            <a href="#" class="btn btn-primary" style="width: 40px">👍</a>
-            <a href="#" class="btn btn-primary" style="width: 40px">👎</a>
-            <a href="#" class="" style="margin-left: 20px"><%= post.likes %></a>
-            <a href="#" class="" style="margin-left: 250px"><%= post.createdAt %></a>
+<body style="background-color: rgb(124, 219, 236)">
+    
+
+
+<div class="container-fluid gedf-wrapper" style="margin-top: 20px">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="h5">@LeeCross</div>
+                    <div class="h7 text-muted">Fullname : </div>
+                    
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="h6 text-muted">Followers</div>
+                        <div class="h5">5.2342</div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="h6 text-muted">Following</div>
+                        <div class="h5">6758</div>
+                    </li>
+                    <li class="list-group-item">Vestibulum at eros</li>
+                </ul>
+            </div>
         </div>
-      
-     </div>
-  </div>
-   </div>
-   <% }) %>
- 
+        <div class="col-md-6 gedf-main">
+            <!--- \\\\\\\Post-->
+            
+            <div class="card gedf-card" style="margin-bottom: 20px">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="posts-tab" data-toggle="tab" href="#posts" role="tab"
+                                aria-controls="posts" aria-selected="true">Make a publication</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="images-tab" data-toggle="tab" role="tab" aria-controls="images"
+                                aria-selected="false" href="#images">Images</a>
+                        </li>
+                    </ul>
+                </div>
+                <form class="" style="text-align: center" action="/publish" method="POST">
+                 <div class="card-body">
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
+                            <div class="form-group">
+                                <label class="sr-only" for="message">post</label>
+                                <textarea class="form-control" id="message" rows="3"
+                                    placeholder="What are you thinking?"></textarea>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="images" role="tabpanel" aria-labelledby="images-tab">
+                            <div class="form-group">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="customFile" />
+                                    <label class="custom-file-label" for="customFile">Upload image</label>
+                                </div>
+                            </div>
+                            <div class="py-4"></div>
+                        </div>
+                    </div>
+                    <div class="btn-toolbar justify-content-between">
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary">share</button>
+                        </div>
+                    </div>
+                </div>
+            </div>   
+                </form>
+                
+            <!-- Post /////-->
 
+            <!--- \\\\\\\Post-->
+            <% userWithPosts.forEach(post => { %>
+            <div class="card gedf-card" style="margin-bottom: 10px">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="mr-2">
+                                <img class="rounded-circle" width="45" src="https://picsum.photos/50/50" alt="" />
+                            </div>
+                            <div class="ml-2">
+                                <div class="h5 m-0">@LeeCross</div>
+                                <div class="h7 text-muted">Miracles Lee Cross</div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="text-muted h7 mb-2">
+                        <i class="fa fa-clock-o"><%= post.createdAt %></i>
+                    </div>
+                    <a class="card-link" href="#">
+                        <h5 class="card-title">
+                        </h5>
+                    </a>
 
+                    <p class="card-text">
+                        <%= post.content %>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <a href="/likes/<%= post._id %>" class="card-link"><i class="fa fa-gittip"></i> Like</a>
+                    <a href="#" class="" style="margin-left: 10px"><%= post.likes %></a>
+                    <a href="#" class="card-link" style="margin-left: 320px"><i class="fa fa-comment"></i> Comment</a>
+                    <a href="#" class="card-link"><i class="fa fa-mail-forward"></i> Share</a>
+                </div>
+            </div>
+            <% }) %>
+            <!-- Postss /////-->
+        </div>
+        <div class="col-md-3">
+            <div class="card gedf-card">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                    <p class="card-text">
+                        Some quick example text to build on the card title and make up the
+                        bulk of the card's content.
+                    </p>
+                    <a href="#" class="card-link">Card link</a>
+                    <a href="#" class="card-link">Another link</a>
+                </div>
+            </div>
+            <div class="card gedf-card">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                    <p class="card-text">
+                        Some quick example text to build on the card title and make up the
+                        bulk of the card's content.
+                    </p>
+                    <a href="#" class="card-link">Card link</a>
+                    <a href="#" class="card-link">Another link</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-
-
-<%- include('partials/footer') %>
+</body>

@@ -16,14 +16,14 @@ app.use(express.static("public"));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//////////////set up session ///////////
-// app.use(
-//   session({
-//     secret: "Our little secret.",
-//     resave: false,
-//     saveUninitialized: false
-//   })
-// );
+////////////set up session ///////////
+app.use(
+  session({
+    secret: "Our little secret.",
+    resave: false,
+    saveUninitialized: false
+  })
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -40,7 +40,7 @@ mongoose.set("useCreateIndex", true); //(node:1926) DeprecationWarning: collecti
 const postSchema = new mongoose.Schema({
   content: String,
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  createdAt: { type: String, default: new Date() },
+  createdAt: { type: String, default: new Date().toLocaleString() },
   likes: { type: Number, default: 0 }
 });
 
@@ -73,6 +73,39 @@ passport.deserializeUser(function (id, done) {
   });
 });
 
+////////GOOGLE LOGIN STRATEGY //////
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      callbackURL: "http://localhost:3000/auth/google/posts",
+      userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo" //handle new user info endpoint "githup"
+    },
+    function (accessToken, refreshToken, profile, cb) {
+      console.log(profile);
+
+      User.findOrCreate({ googleId: profile.id }, function (err, user) {
+        return cb(err, user);
+      });
+    }
+  )
+);
+
+////////FACEBOOK LOGIN STRATEGY //////
+passport.use(new FacebookStrategy({
+  clientID: process.env.APP_ID,
+  clientSecret: process.env.APP_SECRET,
+  callbackURL: "http://localhost:3000/auth/facebook/posts"
+},
+  function (accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+
+
 app.get("/", (req, res) => {
   res.render("login");
 });
@@ -80,6 +113,29 @@ app.get("/", (req, res) => {
 app.get("/login", (req, res) => {
   res.render("login");
 });
+
+////////LOGIN WITH GOOGLE //////////
+app.get("/auth/google",
+passport.authenticate("google", { scope: ["profile"]}));
+
+app.get(
+  "/auth/google/posts",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  function (req, res) {
+    res.redirect("/home");
+  }
+);
+///// LOGIN WITH FACEBOOK/////
+app.get("/auth/facebook", passport.authenticate("facebook"));
+
+app.get(
+  "/auth/facebook/posts",
+  passport.authenticate("facebook", { failureRedirect: "/login" }),
+  function (req, res) {
+    res.redirect("/home");
+  }
+); 
+
 
 app.get("/register", (req, res) => {
   res.render("register");
@@ -89,35 +145,22 @@ app.get("/register", (req, res) => {
 app.get("/home", (req, res) => {
 
   Post.find().populate("user", ["username"]).then(foundPosts => {
-    res.render("home", { userWithPosts: foundPosts });
+    res.render("home", { userWithPosts: foundPosts});
     console.log(foundPosts);
-    
+
   });
 });
 
-// app.get('/home', (req, res) => {
-//   Post.find({ "content": { $ne: null }, (err, foundPosts) => {
-//       if (!err) {
-//           if (foundPosts) {
-//               res.render('home', { userWithPosts: foundPosts });
-//               console.log(foundPosts);
-              
-//           }
-//       } else {
-//           console.log(err);
-//           // res.status(400).send();
-//       }
-//   }).populate('user', ['username']);
-// });
+
 
 app.get("/home", (req, res) => {
   if (req.isAuthenticated()) {
+    User.findById()
     res.render("home");
   } else {
     res.redirect("/login");
   }
 });
- 
 
 //////save user's post in database//////
 app.post("/publish", (req, res) => {
@@ -134,6 +177,7 @@ app.post("/publish", (req, res) => {
   });
 
 });
+
 
 ///// logout ////
 app.get("/logout", (req, res) => {
@@ -184,7 +228,39 @@ app.post("/login", (req, res) => {
   });
 });
 
+//////
+// app.get("/home/:id", (req, res) => {
+//   let id = req.body.id;
+//   Post.findById(id).then(post => {
+//     post.save().then(() => {
+//       res.redirect("/home");
+//     })
+//   })
+// });
 
+////// likes //////
+app.get("/likes/:id", (req, res) => {
+  let id = req.params.id;
+  Post.findById(id).then(post => {
+    let { likes } = post;
+    post.likes = post.likes + 1;
+    post.save().then(() => {
+      res.redirect("/home");
+    });
+  });
+});
+
+////// unlike //////
+app.get("/unlike/:id", (req, res) => {
+  let id = req.params.id;
+  Post.findById(id).then(post => {
+    let { likes } = post;
+    post.likes = post.likes - 1;
+    post.save().then(() => {
+      res.redirect("/home");
+    });
+  });
+});
 
 
 app.listen(3000, () => {
