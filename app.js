@@ -107,7 +107,7 @@ passport.use(new FacebookStrategy({
 
 
 app.get("/", (req, res) => {
-  res.render("login");
+  res.render("home");
 });
 
 app.get("/login", (req, res) => {
@@ -122,7 +122,7 @@ app.get(
   "/auth/google/posts",
   passport.authenticate("google", { failureRedirect: "/login" }),
   function (req, res) {
-    res.redirect("/home");
+    res.redirect("/posts");
   }
 );
 ///// LOGIN WITH FACEBOOK/////
@@ -132,7 +132,7 @@ app.get(
   "/auth/facebook/posts",
   passport.authenticate("facebook", { failureRedirect: "/login" }),
   function (req, res) {
-    res.redirect("/home");
+    res.redirect("/posts");
   }
 ); 
 
@@ -142,41 +142,65 @@ app.get("/register", (req, res) => {
 });
 
 
-app.get("/home", (req, res) => {
+// app.get("/posts", (req, res) => {
+//   Post.find().populate("user", ["username"]).then(foundPosts => {
+//     res.render("posts", { userWithPosts: foundPosts});
+//     console.log(foundPosts);
 
-  Post.find().populate("user", ["username"]).then(foundPosts => {
-    res.render("home", { userWithPosts: foundPosts});
-    console.log(foundPosts);
+//   });
+// });
 
-  });
-});
+app.route("/posts")
+   .get(async(req, res) => {
+       if (req.isAuthenticated()) {
+           const postsAll = await Post.find({ user: { $ne: null } })
+               .populate('user', ['username']);
+           console.log("ID= " + req.user.id);
+           console.log(postsAll);
+           res.render('posts', { userWithPosts: postsAll, username: req.user.username });
+       } else {
+           res.redirect("/login");
+       }
+   })
+   .post(async(req, res) => {
+       let newComment = req.body.postBody;
+       const newPost = new Post({
+           content: newComment.toString(),
+           user: req.user.id
+       });
+       try {
+           await newPost.save();
+           res.redirect("/posts");
+       } catch (err) {
+           res.status(400).send(err);
+       }
+   });
 
 
-
-app.get("/home", (req, res) => {
-  if (req.isAuthenticated()) {
-    User.findById()
-    res.render("home");
-  } else {
-    res.redirect("/login");
-  }
-});
+// app.get("/posts", (req, res) => {
+//   if (req.isAuthenticated()) {
+//     User.findById()
+//     res.render("posts");
+//   } else {
+//     res.redirect("/login");
+//   }
+// });
 
 //////save user's post in database//////
-app.post("/publish", (req, res) => {
-  const content = req.body.postBody;
-  const user = req.body.user;
-  // if (!content || !user) {
-  //   res.status(400).send("missing some data!");
-  //   return;
-  // }
-  const post = new Post({ content, user });
+// app.post("/publish", (req, res) => {
+//   const content = req.body.postBody;
+//   const user = req.body.user;
+//   // if (!content || !user) {
+//   //   res.status(400).send("missing some data!");
+//   //   return;
+//   // }
+//   const post = new Post({ content, user });
 
-  post.save().then(savedPost => {
-    res.redirect("/home");
-  });
+//   post.save().then(savedPost => {
+//     res.redirect("/posts");
+//   });
 
-});
+// });
 
 
 ///// logout ////
@@ -200,7 +224,7 @@ app.post("/register", (req, res) => {
           res.redirect("/register");
         } else {
           passport.authenticate("local")(req, res, () => {
-            res.redirect("/home");
+            res.redirect("/posts");
           });
         }
       }
@@ -222,21 +246,12 @@ app.post("/login", (req, res) => {
       console.log(err);
     } else {
       passport.authenticate("local", { failureRedirect: "/login" })(req, res, () => {
-        res.redirect("/home");
+        res.redirect("/posts");
       });
     }
   });
 });
 
-//////
-// app.get("/home/:id", (req, res) => {
-//   let id = req.body.id;
-//   Post.findById(id).then(post => {
-//     post.save().then(() => {
-//       res.redirect("/home");
-//     })
-//   })
-// });
 
 ////// likes //////
 app.get("/likes/:id", (req, res) => {
@@ -245,22 +260,22 @@ app.get("/likes/:id", (req, res) => {
     let { likes } = post;
     post.likes = post.likes + 1;
     post.save().then(() => {
-      res.redirect("/home");
+      res.redirect("/posts");
     });
   });
 });
 
 ////// unlike //////
-app.get("/unlike/:id", (req, res) => {
-  let id = req.params.id;
-  Post.findById(id).then(post => {
-    let { likes } = post;
-    post.likes = post.likes - 1;
-    post.save().then(() => {
-      res.redirect("/home");
-    });
-  });
-});
+// app.get("/unlike/:id", (req, res) => {
+//   let id = req.params.id;
+//   Post.findById(id).then(post => {
+//     let { likes } = post;
+//     post.likes = post.likes - 1;
+//     post.save().then(() => {
+//       res.redirect("/posts");
+//     });
+//   });
+// });
 
 
 app.listen(3000, () => {
