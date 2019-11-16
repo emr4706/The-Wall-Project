@@ -1,0 +1,6 @@
+/*
+ * Copyright 2017, Yahoo Inc.
+ * Copyrights licensed under the New BSD License.
+ * See the accompanying LICENSE file for terms.
+ */
+Intl._localeData.load({"locales":{"nyn":{"gmtFormat":"GMT{0}","gmtZeroFormat":"GMT","zone":{},"metazone":{}}},"zoneNameIndex":[]});

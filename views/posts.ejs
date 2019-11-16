@@ -2,7 +2,8 @@
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!------ Include the above in your HEAD tag ---------->
-
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/v4-shims.css">
 <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
     integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous" />
 
@@ -16,19 +17,24 @@
     integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
 
-<nav class="navbar navbar-light" style="background-color: #faf6f6; height: 80px;">
-    <a href="#" class="navbar-brand"
-        style="color: crimson; font-family: Georgia, 'Times New Roman', Times, serif; font-size: 40px">Cidiki Lo</a>
-    <div style="margin-left: 800px">
-        <a href="#">Link</a>
-        <a style="margin-left: 10px; margin-right: 10px" href="#">Link</a>
+<nav class="navbar navbar-light" style="background-color: #f3f2f2;">
+    <!-- <a href="#" class="navbar-brand"
+        style="color:#3e64ff; font-family: Helvetica Neue; font-size: 35px;">BoodScap</a> -->
+    <!-- <div><img style="height: 30px; weight: 100px;" src="/css/logo2.png" alt=""></div>  -->
+    <div>
+        <h4 style="color:#3e64ff; font-family: Helvetica Neue;">BoodSchap</h4>
+    </div>
+    <div>
+        <a href="/contact">Contact</a>
+        <a style="margin-left: 10px; margin-right: 10px" href="/about">About</a>
         <a class="btn btn-danger navbar-btn" href="/logout">Logout</a>
     </div>
 
 </nav>
 
 
-<body style="background-color: #38A1F3">
+
+<body style="background-color: #3e64ff">
 
 
 
@@ -38,7 +44,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="h7 text-muted">User Name :</div>
-                        <div class="h5" style="color: #38A1F3">@<%= username %></div>
+                        <div class="h5" style="color: #38A1F3">@<%= loginInf.username %></div>
 
                     </div>
                     <ul class="list-group list-group-flush">
@@ -57,7 +63,7 @@
             <div class="col-md-6 gedf-main">
                 <!--- \\\\\\\Post-->
 
-                <div class="card gedf-card" style="margin-bottom: 20px">
+                <div class="card gedf-card" style="margin-bottom: 10px">
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
                             <li class="nav-item">
@@ -103,7 +109,7 @@
                 <!-- Post /////-->
 
                 <!--- \\\\\\\Post-->
-                <% userWithPosts.forEach(post => { %>
+                <% userWithPosts.slice().reverse().forEach(post => { %>
                 <div class="card gedf-card" style="margin-bottom: 10px">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center">
@@ -121,7 +127,17 @@
                     </div>
                     <div class="card-body">
                         <div class="text-muted h7 mb-2">
-                            <i class="fa fa-clock-o"><%= post.createdAt %></i>
+                            <i class="fa fa-clock-o">
+                                <%let postTime= new moment().diff(post.createdAt); if(postTime>60000 && postTime<3600000){ %>
+                                <%= (postTime/60000).toFixed(0); %> min ago
+                                <%}else{ if (postTime>=3600000 && postTime<86400000){%>
+                                <%= (postTime/3600000).toFixed(0); %> hour ago
+                                <%}else{ if(postTime>=86400000){ %>
+                                <%= (postTime/86400000).toFixed(0); %> day ago
+                                <%}else{ %>
+                                a while ago
+                                <% }}}%>
+                            </i>
                         </div>
                         <a class="card-link" href="#">
                             <h5 class="card-title">
@@ -133,11 +149,17 @@
                         </p>
                     </div>
                     <div class="card-footer" style="height: 60px">
-                        <a href="/likes/<%= post._id %>" class="card-link"><i class="fa fa-gittip"></i> Like</a>
-                        <a href="#" class="" style="margin-left: 10px"><%= post.likes %></a>
-                        <a href="#" class="card-link" style="margin-left: 320px"><i class="fa fa-comment"></i>
-                            Comment</a>
-                        <a href="#" class="card-link"><i class="fa fa-mail-forward"></i> Share</a>
+                        <a href="/likes/<%= post._id %>" class="card-link"><i class="far fa-thumbs-up"></i></a>
+                        <a href="#" class="" style="margin-left: 5px"><%= post.likes %></a>
+
+                        <a href="/unlike/<%= post._id %>" class="card-link" style="margin-left: 50px"><i
+                                class="far fa-thumbs-down"></i></a>
+                        <a href="#" class="" style="margin-left: 5px"><%= post.unlike %></a>
+
+                        <a href="#" class="card-link float-right" style="margin-right: 30px"><i
+                                class="fa fa-comment"></i> Comment</a>
+                        <a href="#" class="card-link float-right" style="margin-right: 100px;"><i
+                                class="fa fa-mail-forward"></i> Share</a>
                     </div>
                 </div>
                 <% }) %>
@@ -156,7 +178,7 @@
                         <a href="#" class="card-link">Another link</a>
                     </div>
                 </div>
-                <div class="card gedf-card">
+                <div class="card gedf-card" style="margin-top: 10px">
                     <div class="card-body">
                         <h5 class="card-title">Card title</h5>
                         <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>

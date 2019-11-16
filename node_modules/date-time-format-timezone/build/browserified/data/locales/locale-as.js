@@ -1,0 +1,6 @@
+/*
+ * Copyright 2017, Yahoo Inc.
+ * Copyrights licensed under the New BSD License.
+ * See the accompanying LICENSE file for terms.
+ */
+Intl._localeData.load({"locales":{"as":{"gmtFormat":"GMT{0}","gmtZeroFormat":"GMT","zone":{},"metazone":{"India":"1,0,2||3,0,4|"}}},"zoneNameIndex":[" ","ভাৰতীয়","সময়","ভা.","স."]});

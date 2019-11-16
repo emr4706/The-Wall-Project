@@ -1,34 +1,34 @@
 <%- include('partials/header') %>
-<div style="text-align: center; color: white; margin-top: 50px; margin-bottom: 10px; font-size: 70px; font-family: 'Times New Roman', Times, serif">
- <h1>Cidiki Lo</h1>
+<div style="text-align: center; color: white; margin-top: 60px;">
+  <h1 style="font-family: Helvetica Neue;">BoodSchap</h1>
 </div>
 <div class="login-page">
   <div class="form">
     <form class="login-form" action="/login" method="POST">
-      <input type="text" name="username" placeholder="Username"/>
-      <input type="password" name="password" placeholder="Password"/>
+      <input type="text" name="username" placeholder="Username" />
+      <input type="password" name="password" placeholder="Password" />
       <button>Log In</button>
       <p class="message">Not registered? <a href="/register">Create an account</a></p>
       <hr>
-      <p style="font-size: 15px; color: #38A1F3"><a href="/">Home Page</a></p>
+      <p class="message"><a href="/">Home Page</a></p>
     </form>
-<hr>
-<div class="facebook">
-  <a class="btn btn-block btn-social btn-facebook" href="/auth/facebook" role="button">
-    <i class="fab fa-facebook"></i>
-    Sign In with Facebook
-  </a>
-</div>
-<div class="google">
-  <a class="btn btn-block btn-social btn-google" href="/auth/google" role="button">
-    <i class="fab fa-google"></i>
-    Sign In with Google
-  </a>
-</div>
-</div>
+    <hr>
+    <div class="facebook">
+      <a class="btn btn-block btn-social btn-facebook" href="/auth/facebook" role="button">
+        <i class="fab fa-facebook"></i>
+        Sign In with Facebook
+      </a>
+    </div>
+    <div class="google">
+      <a class="btn btn-block btn-social btn-google" href="/auth/google" role="button">
+        <i class="fab fa-google"></i>
+        Sign In with Google
+      </a>
+    </div>
+  </div>
 
 </div>
-  
+
 
 
 <%- include('partials/footer') %>

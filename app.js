@@ -2,13 +2,15 @@ require("dotenv").config(); //everytime write to top the phage
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const moment = require("moment");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const FacebookStrategy = require('passport-facebook').Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
 const findOrCreate = require("mongoose-findorcreate");
+// const DateTimeFormat = require('date-time-format-timezone');
 
 const app = express();
 
@@ -39,9 +41,10 @@ mongoose.set("useCreateIndex", true); //(node:1926) DeprecationWarning: collecti
 //////creat post schema//////
 const postSchema = new mongoose.Schema({
   content: String,
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  createdAt: { type: String, default: new Date().toLocaleString() },
-  likes: { type: Number, default: 0 }
+  createdAt: { type: Date, default: new moment() },
+  likes: { type: Number, default: 0 },
+  unlike: { type: Number, default: 0 },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
 });
 
 const Post = new mongoose.model("Post", postSchema);
@@ -63,12 +66,12 @@ const User = new mongoose.model("User", userSchema);
 
 passport.use(User.createStrategy());
 
-passport.serializeUser(function (user, done) {
+passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
 
-passport.deserializeUser(function (id, done) {
-  User.findById(id, function (err, user) {
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
     done(err, user);
   });
 });
@@ -82,10 +85,10 @@ passport.use(
       callbackURL: "http://localhost:3000/auth/google/posts",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo" //handle new user info endpoint "githup"
     },
-    function (accessToken, refreshToken, profile, cb) {
+    function(accessToken, refreshToken, profile, cb) {
       console.log(profile);
 
-      User.findOrCreate({ googleId: profile.id }, function (err, user) {
+      User.findOrCreate({ googleId: profile.id }, function(err, user) {
         return cb(err, user);
       });
     }
@@ -93,18 +96,20 @@ passport.use(
 );
 
 ////////FACEBOOK LOGIN STRATEGY //////
-passport.use(new FacebookStrategy({
-  clientID: process.env.APP_ID,
-  clientSecret: process.env.APP_SECRET,
-  callbackURL: "http://localhost:3000/auth/facebook/posts"
-},
-  function (accessToken, refreshToken, profile, cb) {
-    User.findOrCreate({ facebookId: profile.id }, function (err, user) {
-      return cb(err, user);
-    });
-  }
-));
-
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.APP_ID,
+      clientSecret: process.env.APP_SECRET,
+      callbackURL: "http://localhost:3000/auth/facebook/posts"
+    },
+    function(accessToken, refreshToken, profile, cb) {
+      User.findOrCreate({ facebookId: profile.id }, function(err, user) {
+        return cb(err, user);
+      });
+    }
+  )
+);
 
 app.get("/", (req, res) => {
   res.render("home");
@@ -114,14 +119,24 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 
+app.get("/contact", (req, res) => {
+  res.render("contact");
+});
+
+app.get("/about", (req, res) => {
+  res.render("about");
+});
+
 ////////LOGIN WITH GOOGLE //////////
-app.get("/auth/google",
-passport.authenticate("google", { scope: ["profile"]}));
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile"] })
+);
 
 app.get(
   "/auth/google/posts",
   passport.authenticate("google", { failureRedirect: "/login" }),
-  function (req, res) {
+  function(req, res) {
     res.redirect("/posts");
   }
 );
@@ -131,16 +146,14 @@ app.get("/auth/facebook", passport.authenticate("facebook"));
 app.get(
   "/auth/facebook/posts",
   passport.authenticate("facebook", { failureRedirect: "/login" }),
-  function (req, res) {
+  function(req, res) {
     res.redirect("/posts");
   }
-); 
-
+);
 
 app.get("/register", (req, res) => {
   res.render("register");
 });
-
 
 // app.get("/posts", (req, res) => {
 //   Post.find().populate("user", ["username"]).then(foundPosts => {
@@ -150,32 +163,40 @@ app.get("/register", (req, res) => {
 //   });
 // });
 
-app.route("/posts")
-   .get(async(req, res) => {
-       if (req.isAuthenticated()) {
-           const postsAll = await Post.find({ user: { $ne: null } })
-               .populate('user', ['username']);
-           console.log("ID= " + req.user.id);
-           console.log(postsAll);
-           res.render('posts', { userWithPosts: postsAll, username: req.user.username });
-       } else {
-           res.redirect("/login");
-       }
-   })
-   .post(async(req, res) => {
-       let newComment = req.body.postBody;
-       const newPost = new Post({
-           content: newComment.toString(),
-           user: req.user.id
-       });
-       try {
-           await newPost.save();
-           res.redirect("/posts");
-       } catch (err) {
-           res.status(400).send(err);
-       }
-   });
-
+app
+  .route("/posts")
+  .get(async (req, res) => {
+    if (req.isAuthenticated()) {
+      const postsAll = await Post.find({ user: { $ne: null } }).populate(
+        "user",
+        ["username"]
+      );
+      // .sort({ 'created': 'desc' });
+      //  console.log("ID= " + req.user.id);
+      //  console.log(postsAll);
+      res.render("posts", {
+        userWithPosts: postsAll,
+        loginInf: req.user,
+        moment
+      });
+    } else {
+      res.redirect("/login");
+    }
+  })
+  .post(async (req, res) => {
+    let newComment = req.body.postBody;
+    const newPost = new Post({
+      content: newComment.toString(),
+      user: req.user.id,
+      createdAt: new moment()
+    });
+    try {
+      await newPost.save();
+      res.redirect("/posts");
+    } catch (err) {
+      res.status(400).send(err);
+    }
+  });
 
 // app.get("/posts", (req, res) => {
 //   if (req.isAuthenticated()) {
@@ -202,12 +223,11 @@ app.route("/posts")
 
 // });
 
-
 ///// logout ////
 app.get("/logout", (req, res) => {
   req.logout();
   res.redirect("/");
-})
+});
 
 ////// register /////
 app.post("/register", (req, res) => {
@@ -216,8 +236,9 @@ app.post("/register", (req, res) => {
       {
         username: req.body.username,
         email: req.body.email,
-        fullname: req.body.fullname,
-      }, req.body.password,
+        fullname: req.body.fullname
+      },
+      req.body.password,
       (err, user) => {
         if (err) {
           console.log(err);
@@ -230,7 +251,6 @@ app.post("/register", (req, res) => {
       }
     );
   } else {
-
     console.log("Please check to your information!");
   }
 });
@@ -245,13 +265,16 @@ app.post("/login", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      passport.authenticate("local", { failureRedirect: "/login" })(req, res, () => {
-        res.redirect("/posts");
-      });
+      passport.authenticate("local", { failureRedirect: "/login" })(
+        req,
+        res,
+        () => {
+          res.redirect("/posts");
+        }
+      );
     }
   });
 });
-
 
 ////// likes //////
 app.get("/likes/:id", (req, res) => {
@@ -266,17 +289,16 @@ app.get("/likes/:id", (req, res) => {
 });
 
 ////// unlike //////
-// app.get("/unlike/:id", (req, res) => {
-//   let id = req.params.id;
-//   Post.findById(id).then(post => {
-//     let { likes } = post;
-//     post.likes = post.likes - 1;
-//     post.save().then(() => {
-//       res.redirect("/posts");
-//     });
-//   });
-// });
-
+app.get("/unlike/:id", (req, res) => {
+  let id = req.params.id;
+  Post.findById(id).then(post => {
+    let { unlike } = post;
+    post.unlike = post.unlike + 1;
+    post.save().then(() => {
+      res.redirect("/posts");
+    });
+  });
+});
 
 app.listen(3000, () => {
   console.log("Server starter on http://localhost:3000");

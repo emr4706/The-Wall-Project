@@ -31,7 +31,7 @@
   font-family: "Roboto", sans-serif;
   /* text-transform: uppercase; */
   outline: 0;
-  background: #38A1F3;
+  background: #3e64ff;
   width: 100%;
   border: 0;
   padding: 15px;
@@ -42,7 +42,7 @@
   cursor: pointer;
 }
 .form button:hover,.form button:active,.form button:focus {
-  background: #38A1F3;
+  background: #3e64ff;
 }
 .form .message {
   margin: 15px 0 0;
@@ -50,7 +50,7 @@
   font-size: 16px;
 }
 .form .message a {
-  color: #38A1F3;
+  color: #3e64ff;
   text-decoration: none;
 }
 .form .register-form {
@@ -89,11 +89,11 @@
 .container .info span .fa {
   color: #EF3B3A;
 }
-body {
-  /* background-image: url("123.jpg"); */
-  /* background-image: url("1234.webp"); */
-  /* background-image: url("12.jpg"); */
-}
+/* body {
+  background-image: url("123.jpg"); 
+  background-image: url("1234.webp");
+  background-image: url("home.png");
+} */
 
 .google {
   margin: 30px;
@@ -105,7 +105,7 @@ body {
 }
 
 body {
-  background-color: #38A1F3;
+  background-color: #3e64ff;
 }
 
 .h7 {
@@ -132,51 +132,3 @@ body {
   display: none;
 }
 /* //////////// */
-body {
-  position: relative;
-  height: 100vh;
-  overflow: hidden;
-}
-
-img {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -1;
-  transform: scale(1.8);
-  animation: scaleImage 5s ease-out forwards;
-}
-
-.text {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: 'Roboto', Arial, sans-serif;
-  font-size: calc(20px + 8vw);
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  /* text-transform: uppercase; */
-  color: #fff;
-  background-color: rgb(107, 38, 38);
-  mix-blend-mode: multiply;
-  opacity: 0;
-  animation: fadeInText 3s 2s ease-out forwards;
-}
-
-@keyframes scaleImage {
-  100% {
-      transform: scale(1);
-  }
-}
-
-@keyframes fadeInText {
-  100% {
-      opacity: 1;
-  }
-}
