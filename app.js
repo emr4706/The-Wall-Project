@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 ////////////set up session ///////////
 app.use(
   session({
-    secret: "Our little secret.",
+    secret: "Our posts.",
     resave: false,
     saveUninitialized: false
   })
@@ -224,9 +224,9 @@ app
 // });
 
 ///// logout ////
-app.get("/logout", (req, res) => {
+app.get('/logout', function(req, res){
   req.logout();
-  res.redirect("/");
+  res.redirect('/');
 });
 
 ////// register /////

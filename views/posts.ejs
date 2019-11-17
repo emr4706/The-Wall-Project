@@ -17,19 +17,30 @@
     integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
 
-<nav class="navbar navbar-light" style="background-color: #f3f2f2;">
-    <!-- <a href="#" class="navbar-brand"
-        style="color:#3e64ff; font-family: Helvetica Neue; font-size: 35px;">BoodScap</a> -->
-    <!-- <div><img style="height: 30px; weight: 100px;" src="/css/logo2.png" alt=""></div>  -->
-    <div>
-        <h4 style="color:#3e64ff; font-family: Helvetica Neue;">BoodSchap</h4>
-    </div>
-    <div>
-        <a href="/contact">Contact</a>
-        <a style="margin-left: 10px; margin-right: 10px" href="/about">About</a>
-        <a class="btn btn-danger navbar-btn" href="/logout">Logout</a>
-    </div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" style="color:#3e64ff; font-family: Helvetica Neue; font-size: 35px;" href="#">BoodSchap</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/contact">Contact</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/about">About</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input id="searchInput" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
 </nav>
 
 
@@ -193,5 +204,18 @@
             </div>
         </div>
     </div>
+
+
+    <script>
+        $("#searchInput").on("keyup", function () {
+            var searchList = $(this).val().toLowerCase();
+            $(".card-body").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(searchList) > -1)
+            });
+        });  
+    </script>
+
+
+
 
 </body>
