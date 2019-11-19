@@ -176,7 +176,7 @@ app
       //  console.log(postsAll);
       res.render("posts", {
         userWithPosts: postsAll,
-        loginInf: req.user,
+        userInf: req.user,
         moment
       });
     } else {
@@ -298,6 +298,19 @@ app.get("/unlike/:id", (req, res) => {
       res.redirect("/posts");
     });
   });
+});
+
+app.get("/post/delete/:id", async(req, res) => {
+  let { id } = req.params;
+
+  await Post.findByIdAndRemove(id, (err) => {
+      if (!err) {
+          res.redirect("/posts");
+      } else {
+          console.log(err);
+      }
+  });
+
 });
 
 app.listen(3000, () => {
