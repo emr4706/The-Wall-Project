@@ -44,7 +44,7 @@ const postSchema = new mongoose.Schema({
   createdAt: { type: Date, default: new moment() },
   likes: { type: Number, default: 0 },
   unlike: { type: Number, default: 0 },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+  user: { type: mongoose.SchemaTypes.ObjectId, ref: "User" }
 });
 
 const Post = new mongoose.model("Post", postSchema);
@@ -55,7 +55,9 @@ const userSchema = new mongoose.Schema({
   email: String,
   fullname: String,
   password: String,
-  passwordConfirm: String
+  passwordConfirm: String,
+  googleId: String,
+  facebookId: String,
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -88,7 +90,7 @@ passport.use(
     function(accessToken, refreshToken, profile, cb) {
       console.log(profile);
 
-      User.findOrCreate({ googleId: profile.id }, function(err, user) {
+      User.findOrCreate({ googleId: profile.id, username: profile.name.givenName }, function(err, user) {
         return cb(err, user);
       });
     }
@@ -104,7 +106,8 @@ passport.use(
       callbackURL: "http://localhost:3000/auth/facebook/posts"
     },
     function(accessToken, refreshToken, profile, cb) {
-      User.findOrCreate({ facebookId: profile.id }, function(err, user) {
+      User.findOrCreate({ facebookId: profile.id, username: profile.first_name
+      }, function(err, user) {
         return cb(err, user);
       });
     }
@@ -167,13 +170,10 @@ app
   .route("/posts")
   .get(async (req, res) => {
     if (req.isAuthenticated()) {
-      const postsAll = await Post.find({ user: { $ne: null } }).populate(
+      const postsAll = await Post.find().populate(
         "user",
         ["username"]
       );
-      // .sort({ 'created': 'desc' });
-      //  console.log("ID= " + req.user.id);
-      //  console.log(postsAll);
       res.render("posts", {
         userWithPosts: postsAll,
         userInf: req.user,
